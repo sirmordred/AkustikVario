@@ -32,12 +32,7 @@ void setup()
 void loop()
 {
   pressure = getPressure();
-  //  Serial.print(p0);
-  //  Serial.print(" ");
-  //  Serial.print(pressure);
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
-  //  Serial.print(" ");
-  //  Serial.println(altitude);
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
   toneFreq = (lowpassSlow - lowpassFast) * 50;
@@ -58,24 +53,12 @@ void loop()
   int tens = (altitude/10)%10;
   int hundreds = (altitude/100)%10;
   int thousands = (altitude/1000)%10;
-  //  Serial.print ("thousands: ");
-  //  Serial.println   (thousands);    
-  //  Serial.print ("hundreds:  ");
-  //  Serial.println   (hundreds);  
-  //  Serial.print ("tens:      ");
-  //  Serial.println   (tens);  
-  //  Serial.print ("ones:      ");
-  //  Serial.println   (ones);    
+ 
   while (millis() < time);        //loop frequency timer
   time += 20;
 
   ch1 = pulseIn(3, HIGH, 25000); // Read the pulse width of servo signal connected to pin D3
-  //  if(ch1>1000){
-  //    Serial.println("Left Switch: Engaged");
-  //  } 
-  //  if(ch1<1000){
-  //    Serial.println("Left Switch: Disengaged");
-  //  }
+
   if((map(ch1, 1000,2000,-500,500)) > 0) // interpret the servo channel pulse, if the Vario should beep altitude or send vario sound 
   {
     noTone(2); // create 750 ms of silence, or you won't hear the first altitude beep
@@ -142,9 +125,6 @@ long getPressure()
   OFF = ((unsigned long)calibrationData[2] << 16) + (((int64_t)calibrationData[4] * dT) >> 7);
   SENS = ((unsigned long)calibrationData[1] << 15) + (((int64_t)calibrationData[3] * dT) >> 8);
   P = (((D1 * SENS) >> 21) - OFF) >> 15;
-
-  //  Serial.println(TEMP);
-  //Serial.println(P);
 
   return P;
 }
