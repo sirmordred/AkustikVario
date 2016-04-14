@@ -4,6 +4,7 @@
 
 
 #include <Wire.h>
+
 const byte led = 13;
 unsigned int calibrationData[7];
 unsigned long time = 0;
@@ -14,13 +15,12 @@ int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
 
 
-void setup()
-{
+void setup() {
   Wire.begin();
   Serial.begin(9600); // in case you want to use the included serial.print debugging commands that are currently commented out
   delay(200);
   setupSensor();
-  for (int p0=0; p0 <= 100; p0++){
+  for (int p0 = 0; p0 <= 100; p0++) {
     pressure = getPressure(); // warming up the sensor for ground level setting
   } 
   p0 = getPressure(); // Setting the ground level pressure
@@ -29,8 +29,7 @@ void setup()
 }
 
 
-void loop()
-{
+void loop() {
   pressure = getPressure();
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
@@ -39,16 +38,15 @@ void loop()
   toneFreqLowpass = toneFreqLowpass + (toneFreq - toneFreqLowpass) * 0.1;
   toneFreq = constrain(toneFreqLowpass, -500, 500);
   ddsAcc += toneFreq * 100 + 2000;
-  if (toneFreq < -40 || (ddsAcc > 0 && toneFreq > 40)) 
-  {
+  
+  if (toneFreq < -40 || (ddsAcc > 0 && toneFreq > 40)) {
     tone(2, toneFreq + 510);
     ledOn();  // the Arduino led will blink if the Vario plays a tone, so you can test without having audio connected
-  }
-  else
-  {
+  } else {
     noTone(2);
     ledOff();
   }
+  
   int ones = altitude%10;
   int tens = (altitude/10)%10;
   int hundreds = (altitude/100)%10;
@@ -59,22 +57,18 @@ void loop()
 
   ch1 = pulseIn(3, HIGH, 25000); // Read the pulse width of servo signal connected to pin D3
 
-  if((map(ch1, 1000,2000,-500,500)) > 0) // interpret the servo channel pulse, if the Vario should beep altitude or send vario sound 
-  {
+  if((map(ch1, 1000,2000,-500,500)) > 0) { // interpret the servo channel pulse, if the Vario should beep altitude or send vario sound 
     noTone(2); // create 750 ms of silence, or you won't hear the first altitude beep
     ledOff();
     delay(750);
-    if(hundreds == 0)
-    {
+    if(hundreds == 0) {
       tone(2,900);                //long duration tone if the number is zero
       ledOn();
       delay(600);
       noTone(2);
       ledOff();
-    }
-    else
-      for(char a = 0; a < hundreds; a++)          //this loop makes a beep for each hundred meters altitude
-      {
+    } else {
+      for(char a = 0; a < hundreds; a++) {        //this loop makes a beep for each hundred meters altitude
         tone(2,900); // 900 Hz tone frequency for the hundreds
         ledOn();
         delay(200);
@@ -83,18 +77,16 @@ void loop()
         delay(200);
       }
     delay(750);                            //longer delay between hundreds and tens
+    }
 
-    if(tens == 0)
-    {
+    if(tens == 0) {
       tone(2,1100);                //long pulse if the number is zero
       ledOn();
       delay(600);
       noTone(2);
       ledOff();
-    }
-    else
-      for(char a = 0; a < tens; a++)          //this loop makes a beep for each ten meters altitude
-      {
+    } else {
+      for(char a = 0; a < tens; a++) {          //this loop makes a beep for each ten meters altitude
         tone(2,1100); //1100 Hz tone frequency for the tens
         ledOn();
         delay(200);
@@ -102,17 +94,16 @@ void loop()
         ledOff();
         delay(200);
       }
+    }
 
-    for (int p0=0; p0 <= 40; p0++)
-    {
+    for (int p0=0; p0 <= 40; p0++) {
       pressure = getPressure(); // warming up the sensor again, by reading it 40 times
     } 
   } 
 }
 
 
-long getPressure()
-{
+long getPressure() {
   long D1, D2, dT, P;
   float TEMP;
   int64_t OFF, SENS;
@@ -130,29 +121,25 @@ long getPressure()
 }
 
 
-long getData(byte command, byte del)
-{
+long getData(byte command, byte del) {
   long result = 0;
   twiSendCommand(0x77, command);
   delay(del);
   twiSendCommand(0x77, 0x00);
   Wire.requestFrom(0x77, 3);
   if(Wire.available()!=3) Serial.println("Error: raw data not available");
-  for (int i = 0; i <= 2; i++)
-  {
+  for (int i = 0; i <= 2; i++) {
     result = (result<<8) | Wire.read(); 
   }
   return result;
 }
 
 
-void setupSensor()
-{
+void setupSensor() {
   twiSendCommand(0x77, 0x1e);
   delay(100);
 
-  for (byte i = 1; i <=6; i++)
-  {
+  for (byte i = 1; i <= 6; i++) {
     unsigned int low, high;
 
     twiSendCommand(0x77, 0xa0 + i * 2);
@@ -169,25 +156,21 @@ void setupSensor()
 }
 
 
-void twiSendCommand(byte address, byte command)
-{
+void twiSendCommand(byte address, byte command) {
   Wire.beginTransmission(address);
   if (!Wire.write(command)) Serial.println("Error: write()");
-  if (Wire.endTransmission()) 
-  {
+  if (Wire.endTransmission()) {
     Serial.print("Error when sending command: ");
     Serial.println(command, HEX);
   }
 }
 
 
-void ledOn()
-{
+void ledOn() {
   digitalWrite(led,1);
 }
 
 
-void ledOff()
-{
+void ledOff() {
   digitalWrite(led,0);
 }
