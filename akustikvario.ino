@@ -38,8 +38,6 @@ void loop() {
     val = getPressure();
     // add the value to the total:
     total = total + val;
-    // delay for stability
-    delay(2);
   }
   pressure = total / numreadings;
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
@@ -107,8 +105,8 @@ void loop() {
       }
     }
 
-    for (int p0=0; p0 <= 40; p0++) {
-      pressure = getPressure(); // warming up the sensor again, by reading it 40 times
+    for (int p0 = 1; p0 <= 30; p0++) {
+      pressure = getPressure(); // warming up the sensor again, by reading it 30 times
     } 
   }
   val = 0;
