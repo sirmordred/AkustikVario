@@ -10,6 +10,9 @@ unsigned int calibrationData[7];
 unsigned long time = 0;
 float toneFreq, toneFreqLowpass, pressure, lowpassFast, lowpassSlow;
 float p0; // this will be used to store the airfield elevation pressure
+float total = 0;
+float val = 0;
+float numReadings = 10.0;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
@@ -30,7 +33,15 @@ void setup() {
 
 
 void loop() {
-  pressure = getPressure();
+  for(int i = 1; i <= numreadings; i++) {
+    // read from the sensor:
+    val = getPressure();
+    // add the value to the total:
+    total = total + val;
+    // delay for stability
+    delay(2);
+  }
+  pressure = total / numreadings;
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
@@ -99,7 +110,10 @@ void loop() {
     for (int p0=0; p0 <= 40; p0++) {
       pressure = getPressure(); // warming up the sensor again, by reading it 40 times
     } 
-  } 
+  }
+  val = 0;
+  total = 0;
+  average = 0;
 }
 
 
