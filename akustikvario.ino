@@ -33,13 +33,13 @@ void setup() {
 
 
 void loop() {
-  for(int i = 1; i <= numreadings; i++) {
+  for(int i = 1; i <= numReadings; i++) {
     // read from the sensor:
     val = getPressure();
     // add the value to the total:
     total = total + val;
   }
-  pressure = total / numreadings;
+  pressure = total / numReadings;
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
