@@ -113,7 +113,6 @@ void loop() {
   }
   val = 0;
   total = 0;
-  average = 0;
 }
 
 
