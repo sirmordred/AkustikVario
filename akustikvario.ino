@@ -165,10 +165,6 @@ void setupSensor() {
     high = Wire.read();
     low = Wire.read();
     calibrationData[i] = high<<8 | low;
-    Serial.print("calibration data #");
-    Serial.print(i);
-    Serial.print(" = ");
-    Serial.println( calibrationData[i] ); 
   }
 }
 
