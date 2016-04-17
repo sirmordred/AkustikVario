@@ -12,7 +12,6 @@ float toneFreq, toneFreqLowpass, pressure, lowpassFast, lowpassSlow;
 float p0; // this will be used to store the airfield elevation pressure
 float total = 0;
 float val = 0;
-float numReadings = 10.0;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
@@ -33,13 +32,13 @@ void setup() {
 
 
 void loop() {
-  for(int i = 1; i <= numReadings; i++) {
+  for(int i = 1; i <= 10; i++) { //Read the value by 10 times
     // read from the sensor:
     val = getPressure();
     // add the value to the total:
     total = total + val;
   }
-  pressure = total / numReadings;
+  pressure = total / 10.0; //Divide total to the number of readings(10)
   altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
