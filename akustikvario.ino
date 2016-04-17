@@ -12,6 +12,8 @@ float toneFreq, toneFreqLowpass, pressure, lowpassFast, lowpassSlow;
 float p0; // this will be used to store the airfield elevation pressure
 float total = 0;
 float val = 0;
+float t1 = 0;
+float val2 = 0;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
@@ -22,10 +24,15 @@ void setup() {
   Serial.begin(9600); // in case you want to use the included serial.print debugging commands that are currently commented out
   delay(200);
   setupSensor();
-  for (int p0 = 0; p0 <= 100; p0++) {
-    pressure = getPressure(); // warming up the sensor for ground level setting
-  } 
-  p0 = getPressure(); // Setting the ground level pressure
+  for (int p0 = 1; p0 <= 60; p0++) {
+    pressure = getPressure(); // warming up the sensor by reading it 60 times for ground level setting
+  }
+  for (int z = 1; z <= 40; z++) {
+    val2 = getPressure();
+    t1 = t1 + val2;
+  }
+  pressure = t1 / 40.0;
+  p0 = pressure; // Setting the ground level pressure
   lowpassFast = lowpassSlow = pressure;
   pinMode(3, INPUT); // Set our input pins as such for altitude command input from receiver via pin D3
 }
