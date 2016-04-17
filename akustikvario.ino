@@ -56,10 +56,10 @@ void loop() {
   
   if (toneFreq < -40 || (ddsAcc > 0 && toneFreq > 40)) {
     tone(2, toneFreq + 510);
-    ledOn();  // the Arduino led will blink if the Vario plays a tone, so you can test without having audio connected
+    digitalWrite(led,1);  // the Arduino led will blink if the Vario plays a tone, so you can test without having audio connected
   } else {
     noTone(2);
-    ledOff();
+    digitalWrite(led,0);
   }
   
   int ones = altitude%10;
@@ -74,21 +74,21 @@ void loop() {
 
   if((map(ch1, 1000,2000,-500,500)) > 0) { // interpret the servo channel pulse, if the Vario should beep altitude or send vario sound 
     noTone(2); // create 750 ms of silence, or you won't hear the first altitude beep
-    ledOff();
+    digitalWrite(led,0);
     delay(750);
     if(hundreds == 0) {
       tone(2,900);                //long duration tone if the number is zero
-      ledOn();
+      digitalWrite(led,1);
       delay(600);
       noTone(2);
-      ledOff();
+      digitalWrite(led,0);
     } else {
       for(char a = 0; a < hundreds; a++) {        //this loop makes a beep for each hundred meters altitude
         tone(2,900); // 900 Hz tone frequency for the hundreds
-        ledOn();
+        digitalWrite(led,1);
         delay(200);
         noTone(2);
-        ledOff();
+        digitalWrite(led,0);
         delay(200);
       }
     delay(750);                            //longer delay between hundreds and tens
@@ -96,17 +96,17 @@ void loop() {
 
     if(tens == 0) {
       tone(2,1100);                //long pulse if the number is zero
-      ledOn();
+      digitalWrite(led,1);
       delay(600);
       noTone(2);
-      ledOff();
+      digitalWrite(led,0);
     } else {
       for(char a = 0; a < tens; a++) {          //this loop makes a beep for each ten meters altitude
         tone(2,1100); //1100 Hz tone frequency for the tens
-        ledOn();
+        digitalWrite(led,1);
         delay(200);
         noTone(2);
-        ledOff();
+        digitalWrite(led,0);
         delay(200);
       }
     }
@@ -176,14 +176,4 @@ void twiSendCommand(byte address, byte command) {
     Serial.print("Error when sending command: ");
     Serial.println(command, HEX);
   }
-}
-
-
-void ledOn() {
-  digitalWrite(led,1);
-}
-
-
-void ledOff() {
-  digitalWrite(led,0);
 }
