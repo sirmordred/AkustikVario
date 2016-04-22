@@ -85,7 +85,7 @@ void loop() {
       noTone(2);
       digitalWrite(led,0);
     } else {
-      for(char a = 0; a < hundreds; a++) {        //this loop makes a beep for each hundred meters altitude
+      for(int h = 1; h <= hundreds; h++) {        //this loop makes a beep for each hundred meters altitude
         tone(2,900); // 900 Hz tone frequency for the hundreds
         digitalWrite(led,1);
         delay(200);
@@ -103,7 +103,7 @@ void loop() {
       noTone(2);
       digitalWrite(led,0);
     } else {
-      for(char a = 0; a < tens; a++) {          //this loop makes a beep for each ten meters altitude
+      for(int g = 1; g <= tens; g++) {          //this loop makes a beep for each ten meters altitude
         tone(2,1100); //1100 Hz tone frequency for the tens
         digitalWrite(led,1);
         delay(200);
