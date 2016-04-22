@@ -14,6 +14,7 @@ float total = 0;
 float val = 0;
 float t1 = 0;
 float val2 = 0;
+float alt1;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
@@ -46,7 +47,8 @@ void loop() {
     total = total + val;
   }
   pressure = total / 10.0; //Divide total to the number of readings(10)
-  altitude = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
+  alt1 = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
+  altitude = round(alt1);
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
   toneFreq = (lowpassSlow - lowpassFast) * 50;
