@@ -25,7 +25,7 @@ void setup() {
   Serial.begin(9600); // in case you want to use the included serial.print debugging commands that are currently commented out
   delay(200);
   setupSensor();
-  for (int p0 = 1; p0 <= 60; p0++) {
+  for (int a = 1; a <= 60; a++) {
     pressure = getPressure(); // warming up the sensor by reading it 60 times for ground level setting
   }
   for (int z = 1; z <= 40; z++) {
@@ -113,7 +113,7 @@ void loop() {
       }
     }
 
-    for (int p0 = 1; p0 <= 30; p0++) {
+    for (int s = 1; s <= 30; s++) {
       pressure = getPressure(); // warming up the sensor again, by reading it 30 times
     } 
   }
@@ -160,7 +160,6 @@ void setupSensor() {
 
   for (byte i = 1; i <= 6; i++) {
     unsigned int low, high;
-
     twiSendCommand(0x77, 0xa0 + i * 2);
     Wire.requestFrom(0x77, 2);
     if(Wire.available()!=2) Serial.println("Error: calibration data not available");
