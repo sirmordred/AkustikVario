@@ -1,5 +1,5 @@
 //**********************************
-//*   Akustik vario ver1.6 Design Oguzhan/Osman    *
+//*   Akustik vario ver2.0 Design Oguzhan/Osman    *
 //*********************************
 
 
