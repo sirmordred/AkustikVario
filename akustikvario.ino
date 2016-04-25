@@ -18,6 +18,15 @@ float alt1;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
 int ddsAcc;
+float climbRate = 0;
+int lastaltitude;
+int firstaltitude;
+int firstseq;
+int variation = 0;
+unsigned long clock;
+double sec;
+double factor = 1000000;
+int climbSpeed;
 
 
 void setup() {
@@ -32,23 +41,35 @@ void setup() {
     val2 = getPressure();
     t1 = t1 + val2;
   }
-  pressure = t1 / 40.0;
+  pressure = t1 / float(40);
   p0 = pressure; // Setting the ground level pressure
   lowpassFast = lowpassSlow = pressure;
   pinMode(3, INPUT); // Set our input pins as such for altitude command input from receiver via pin D3
+  firstseq = 1;
+  val2 = 0;
+  t1 = 0;
 }
 
 
 void loop() {
+  clock = micros();
   for(int i = 1; i <= 10; i++) { //Read the value by 10 times
     // read from the sensor:
     val = getPressure();
     // add the value to the total:
     total = total + val;
   }
-  pressure = total / 10.0; //Divide total to the number of readings(10)
+  pressure = total / float(10); //Divide total to the number of readings(10)
   alt1 = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   altitude = round(alt1);
+  if (firstseq) {
+    firstaltitude = altitude;
+  } else {
+    lastaltitude = altitude;
+    variation = lastaltitude - firstaltitude;
+    firstaltitude = lastaltitude;
+  }
+  
   lowpassFast = lowpassFast + (pressure - lowpassFast) * 0.1;
   lowpassSlow = lowpassSlow + (pressure - lowpassSlow) * 0.05;
   toneFreq = (lowpassSlow - lowpassFast) * 50;
@@ -119,6 +140,13 @@ void loop() {
   }
   val = 0;
   total = 0;
+  clock = micros() - clock;
+  sec = clock/factor;
+  climbRate = float(variation) / sec;
+  climbSpeed = round(climbRate);
+  Serial.println("Climb speed (m/sn) = ");
+  Serial.print(climbSpeed);
+  firstseq = 0;
 }
 
 
