@@ -11,9 +11,7 @@ unsigned long time = 0;
 float toneFreq, toneFreqLowpass, pressure, lowpassFast, lowpassSlow;
 float p0; // this will be used to store the airfield elevation pressure
 float total = 0;
-float val = 0;
 float t1 = 0;
-float val2 = 0;
 float alt1;
 int altitude;
 int ch1; // Here's where we'll keep our channel values
@@ -37,33 +35,29 @@ void setup() {
   for (int a = 1; a <= 60; a++) {
     pressure = getPressure(); // warming up the sensor by reading it 60 times for ground level setting
   }
-  for (int z = 1; z <= 40; z++) {
-    val2 = getPressure();
-    t1 = t1 + val2;
+  for (int z = 0; z < 40; z++) {
+    t1 += getPressure();
   }
-  pressure = t1 / float(40);
+  pressure = t1 / 40f;
   p0 = pressure; // Setting the ground level pressure
   lowpassFast = lowpassSlow = pressure;
   pinMode(3, INPUT); // Set our input pins as such for altitude command input from receiver via pin D3
   firstseq = 1;
-  val2 = 0;
-  t1 = 0;
 }
 
 
 void loop() {
   clock = micros();
-  for(int i = 1; i <= 10; i++) { //Read the value by 10 times
-    // read from the sensor:
-    val = getPressure();
-    // add the value to the total:
-    total = total + val;
+  for(int i = 0; i < 10; i++) { //Read the value by 10 times
+    // read and add the value to the total:
+    total += getPressure();
   }
-  pressure = total / float(10); //Divide total to the number of readings(10)
+  pressure = total / 10f; //Divide total to the number of readings(10)
   alt1 = (float)44330 * (1 - pow(((float) pressure/p0), 0.190295));
   altitude = round(alt1);
   if (firstseq) {
     firstaltitude = altitude;
+    firstseq = 0;
   } else {
     lastaltitude = altitude;
     variation = lastaltitude - firstaltitude;
@@ -138,7 +132,6 @@ void loop() {
       pressure = getPressure(); // warming up the sensor again, by reading it 30 times
     } 
   }
-  val = 0;
   total = 0;
   clock = micros() - clock;
   sec = clock/factor;
@@ -146,7 +139,6 @@ void loop() {
   climbSpeed = round(climbRate);
   Serial.println("Climb speed (m/sn) = ");
   Serial.print(climbSpeed);
-  firstseq = 0;
 }
 
 
